@@ -1,8 +1,7 @@
 <?php
 
 require_once "../library/book.php";
-
-$bookObj = new Book;
+$bookObj = new Book();
 
 $title = "";
 $author = "";
