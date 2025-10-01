@@ -41,21 +41,64 @@ class Book extends Library {
         $query->bindParam(":genre", $genre);
         
         if ($query->execute()) {
-            return $query->fetchAll(); // fetch as associative array
+            return $query->fetchAll();
         } else {
             return null;
         }
     }
 
-    public function isBookExist($ptitle){
+    public function isBookExist($ptitle, $pid=""){
         $sql = "SELECT COUNT(*) as total FROM book WHERE title = :title";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(":title", $ptitle);
+
         $record = null;
+
         if ($query->execute()) {
             $record = $query->fetch();
         }
 
-        return ($record & $record["total"] > 0);
+        if($record["total"] > 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function fetchBook($pid) {
+        $sql = "SELECT * FROM book WHERE id = :id";
+        $query = $this->connect()->prepare($sql);
+        $query->bindParam(":id", $pid);
+        
+        if ($query->execute()) {
+            return $query->fetch();
+        } else {
+            return null;
+        }
+    }
+
+    public function editBook($pid) {
+        $sql = "UPDATE book SET title=:title, author=:author, genre=:genre, publication_year=:publication_year, publisher=:publisher, copies=:copies WHERE id = :id";
+        
+        $query = $this->connect()->prepare($sql); 
+
+        $query->bindParam(":title", $this->title);
+        $query->bindParam(":author", $this->author);
+        $query->bindParam(":genre", $this->genre);
+        $query->bindParam(":publication_year", $this->publication_year);
+        $query->bindParam(":publisher", $this->publisher);
+        $query->bindParam(":copies", $this->copies);
+        $query->bindParam(":id", $pid);
+
+        return $query->execute();
+    }
+
+    public function deleteBook($pid) {
+        $sql = "DELETE FROM book WHERE id = :id";
+        
+        $query = $this->connect()->prepare($sql);
+        $query->bindParam(":id", $pid);
+
+        return $query->execute();
     }
 }
